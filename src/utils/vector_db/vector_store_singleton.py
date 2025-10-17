@@ -12,11 +12,12 @@ class VectorStoreSingleton():
             cls._instance = super(VectorStoreSingleton, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, embeddings_model, document_loader_strategy: DocumentLoaderStrategy, vector_index_strategy: VectorIndexStrategy):
+    def __init__(self, embeddings_model, document_loader_strategy: DocumentLoaderStrategy, vector_index_strategy: VectorIndexStrategy, chunker=None):
         if not hasattr(self, '_initialized'):
             self.embeddings_model = embeddings_model
             self.document_loader_strategy = document_loader_strategy
             self.vector_index_strategy = vector_index_strategy
+            self.chunker = chunker
             self._initialized = True 
 
     def _build_vectorstore(self):
@@ -24,19 +25,22 @@ class VectorStoreSingleton():
         if self.vector_store is None:
             print("--- Building Vector Store ---")
 
-            documents = self.document_loader_strategy.load_documents(path = path)
-            
+            documents_markdown = self.document_loader_strategy.load_documents(path = path)
+
+            # Build or load the backing vector index using provided embeddings
             self.vector_store = self.vector_index_strategy.create_or_load_vector_index(
-                documents, self.embeddings_model
+                documents_markdown,
+                chunker=self.chunker
             )
             print("--- Vector Store Built Successfully ---")
         return self.vector_store
 
 
     def query(self, query_text: str):
-        query_embedding = self.embeddings_model.encode(query_text, convert_to_numpy=True)
+        # HuggingFaceEmbeddings from langchain exposes embed_query for single strings
+        query_embedding = self.embeddings_model.embed_query(query_text)
         """The main query method."""
         if self.vector_store is None:
             self._build_vectorstore()
-        results = self.vector_index_strategy.semantic_search( embeded_query= query_embedding)
+        results = self.vector_index_strategy.semantic_search(embeded_query=query_embedding)
         return results

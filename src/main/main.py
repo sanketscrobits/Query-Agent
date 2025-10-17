@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request, Query, HTTPException, Response
-from settings import WHATSAPP_TOKEN, PHONE_NUMBER_ID, GOOGLE_API_KEY
-from agents.query_agent import create_query_agent
-from Workflow.workflow import workflow
+from settings import WHATSAPP_TOKEN, PHONE_NUMBER_ID
+from src.Workflow.workflow import workflow
 import httpx
 import re
 

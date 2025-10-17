@@ -3,6 +3,7 @@ from src.utils.vector_db.vector_store_singleton import VectorStoreSingleton
 from langchain_huggingface import HuggingFaceEmbeddings
 from src.utils.vector_db.loader_strategies.local_loader import LocalLoader
 from src.utils.vector_db.index_strategies.pinecone_vector_index import PineconeVectorIndex
+from langchain_experimental.text_splitter import SemanticChunker
 
 
 @tool
@@ -17,40 +18,24 @@ def get_context(query_text: str) -> str:
         Context related to user's question in string format
     """
 
-    embeddings_model = HuggingFaceEmbeddings( model_name="all-MiniLM-L6-v2" )
+    embeddings_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
-    document_loader_strategy = LocalLoader
-    vector_index_strategy = PineconeVectorIndex(embeddings = embeddings_model).semantic_search
+    document_loader_strategy = LocalLoader()
+    vector_index_strategy = PineconeVectorIndex(embeddings=embeddings_model)
+    # Build a semantic chunker callable compatible with our index API
+    text_splitter = SemanticChunker(embeddings_model, breakpoint_threshold_type="percentile")
+    def semantic_chunker(markdown_text: str):
+        return text_splitter.create_documents([markdown_text])
 
-    vector_store = VectorStoreSingleton(embeddings_model = embeddings_model,
-                         document_loader_strategy = document_loader_strategy,
-                         vector_index_strategy = vector_index_strategy)
+    vector_store = VectorStoreSingleton(
+        embeddings_model=embeddings_model,
+        document_loader_strategy=document_loader_strategy,
+        vector_index_strategy=vector_index_strategy,
+        chunker=semantic_chunker,
+    )
 
     result = vector_store.query(query_text = query_text)
     return result
-
-
-    '''try:
-        model = SentenceTransformer("all-MiniLM-L6-v2")
-        pc = Pinecone(api_key=PINECONE_API_KEY)
-        query_embedding = model.encode(query_text, convert_to_numpy=True)
-        index = pc.Index(PINECONE_INDEX_NAME)
-
-        results = index.query(
-            vector=query_embedding.tolist(),
-            top_k=20,
-            include_metadata=True,
-            score_threshold=0.7
-        )
-        
-        if results["matches"]:
-            context = results["matches"][0]["metadata"]["chunk_text"]
-            return context
-        else:
-            return "No relevant context found for the question."
-            
-    except Exception as e:
-        return f"Error retrieving context: {str(e)}"'''
 
 if __name__ == "__main__":
     print(get_context("What initiative did the federal government announce regarding AI?"))

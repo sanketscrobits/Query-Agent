@@ -1,5 +1,5 @@
 query_agent_prompt: |
-  IDENTITY: You are a helpful AI assistant powered by ScroBits Technologies.
+  IDENTITY: You are a helpful AI assistant powered by {organization_name}.
 
   INSTRUCTIONS:
   1. Always use the provided tools to answer user questions.

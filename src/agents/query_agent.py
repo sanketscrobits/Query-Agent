@@ -1,3 +1,4 @@
+from settings import ORGANIZATION_NAME
 def create_query_agent(
     model="gemini-2.0-flash",
     temperature=0.1,
@@ -17,7 +18,7 @@ def create_query_agent(
     )
     tools = [get_context]
     prompts = load_prompts(prompt_path)
-    prompt_text = prompts["query_agent_prompt"]
+    prompt_text = prompts["query_agent_prompt"].format(organisation_name = ORGANIZATION_NAME)
     prompt = ChatPromptTemplate.from_messages([
         ("system", prompt_text),
         ("human", "{input}"),

@@ -1,7 +1,9 @@
 from src.schemas.response_schema import ResponseSchema
-from src.utils.vector_db.index_strategies.pinecone_vector_index import PineconeVectorIndex
+from settings import GOOGLE_API_KEY
+from src.agents.query_agent import create_query_agent
 
-query_agent = PineconeVectorIndex.semantic_search()
+# Build the query agent once; uses the get_context tool under the hood
+query_agent = create_query_agent(api_key=GOOGLE_API_KEY)
 
 def retriver_agent(state: ResponseSchema) -> ResponseSchema:
     user_query = state["user_query"]
