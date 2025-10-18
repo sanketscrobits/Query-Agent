@@ -1,5 +1,6 @@
 from src.utils.vector_db.loader_strategies.base import DocumentLoaderStrategy
 from src.utils.vector_db.index_strategies.base import VectorIndexStrategy
+from langchain_experimental.text_splitter import SemanticChunker
 path = r"F:\ScroBits_Tech\Query-Agent\documents\MIREMS.pdf"
 
 class VectorStoreSingleton():
@@ -12,12 +13,15 @@ class VectorStoreSingleton():
             cls._instance = super(VectorStoreSingleton, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, embeddings_model, document_loader_strategy: DocumentLoaderStrategy, vector_index_strategy: VectorIndexStrategy, chunker=None):
+    def __init__(self, embeddings_model, document_loader_strategy: DocumentLoaderStrategy, vector_index_strategy: VectorIndexStrategy):
         if not hasattr(self, '_initialized'):
             self.embeddings_model = embeddings_model
             self.document_loader_strategy = document_loader_strategy
             self.vector_index_strategy = vector_index_strategy
-            self.chunker = chunker
+            self.text_splitter = SemanticChunker(embeddings_model, breakpoint_threshold_type="percentile")
+            def semantic_chunker(markdown_text: str):
+                return self.text_splitter.create_documents([markdown_text])
+            self.chunker = semantic_chunker
             self._initialized = True 
 
     def _build_vectorstore(self):
