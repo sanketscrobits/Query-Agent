@@ -18,7 +18,7 @@ def create_query_agent(
     )
     tools = [get_context]
     prompts = load_prompts(prompt_path)
-    prompt_text = prompts["query_agent_prompt"].format(organisation_name = ORGANIZATION_NAME)
+    prompt_text = prompts["query_agent_prompt"].format(organization_name = ORGANIZATION_NAME)
     prompt = ChatPromptTemplate.from_messages([
         ("system", prompt_text),
         ("human", "{input}"),
