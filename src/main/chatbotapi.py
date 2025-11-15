@@ -79,3 +79,4 @@ async def chatbot_endpoint(request: ChatRequest):
     except Exception as e:
         print("Error in /chatbot:", e)
         raise HTTPException(status_code=500, detail=str(e))
+# python -m uvicorn src.main.chatbotapi:app --reload

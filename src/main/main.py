@@ -166,3 +166,4 @@ async def send_whatsapp_message(to: str, message: str):
         except httpx.HTTPStatusError as e:
             print("WhatsApp API error:", e.response.text)
 
+# python -m uvicorn src.main.main:app --reload
