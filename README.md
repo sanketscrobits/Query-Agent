@@ -11,23 +11,46 @@ Query-Agent is an AI-powered question-answering system that retrieves context fr
 ```
 Query-Agent/
 │
-├── README.md
-├── pyproject.toml
-├── settings.py
-├── uv.lock
-├── .python-version
-├── .gitignore
-│
+├── chatbot_ui/
+├── documents/
 ├── src/
-│   ├── main/
-│   │   ├── main.py
-│   │   └── supervisor.py
 │   ├── agents/
-│   │   └── qurey_agent.py
+│   │   ├── evaluator_agent.py
+│   │   ├── query_agent.py
+│   │   └── retriver_agent.py
+│   ├── document_loader/
+│   │   ├── local_loader.py
+│   │   ├── prompt.txt
+│   │   ├── prompt2.txt
+│   │   └── web_scraper.py
+│   ├── main/
+│   │   ├── chatbotapi.py
+│   │   └── main.py
+│   ├── schemas/
+│   │   ├── evaluation_schema.py
+│   │   └── response_schema.py
 │   ├── tools/
 │   │   └── query_tool.py
-│   └── document_loader/
-│       └── local_loader.py
+│   ├── Uploader/
+│   │   ├── upload_api.py
+│   │   └── uploader_pinecone.py
+│   ├── utils/
+│   │   ├── vector_db/
+│   │   ├── mermaid_graph_generator.py
+│   │   ├── prompts.yml
+│   │   └── yaml_loader.py
+│   └── Workflow/
+│       └── workflow.py
+├── .dockerignore
+├── .env
+├── .gitignore
+├── .python-version
+├── docker-compose.yml
+├── Dockerfile
+├── pyproject.toml
+├── README.md
+├── settings.py
+└── uv.lock
 ```
 
 ---
